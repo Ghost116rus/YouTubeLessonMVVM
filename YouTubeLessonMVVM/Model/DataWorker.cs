@@ -73,7 +73,7 @@ namespace YouTubeLessonMVVM.Model
                         Name = name,
                         Salary = salary,
                         MaxNumber = maxNumber,
-                        Department = department
+                        DepartmentId = department.Id
                     };
                     db.Positions.Add(newPositions);
                     db.SaveChanges();
@@ -98,7 +98,7 @@ namespace YouTubeLessonMVVM.Model
                         Name = name,
                         Surname = surName,
                         Phone = phone,
-                        Position = position
+                        PositionId = position.Id
                     };
                     db.Staffs.Add(newStaff);
                     db.SaveChanges();

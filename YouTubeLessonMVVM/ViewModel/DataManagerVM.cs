@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
 using YouTubeLessonMVVM.Model;
+using YouTubeLessonMVVM.View;
 using YouTubeLessonMVVM.View.Add;
 using YouTubeLessonMVVM.View.Edit;
 
@@ -45,6 +50,139 @@ namespace YouTubeLessonMVVM.ViewModel
                 NotifyPropertyChanged("AllStaffs");
             }
         }
+
+
+        // свойства для отедла
+        public string? DepartmentName { get; set; }
+
+        // свойства для позиций
+        public string? PositionName { get; set; }
+        public decimal PositionSalary { get; set; }
+        public int PositionMaxNumber { get; set; }
+        public Department? PositionDepartment { get; set; }
+
+        // свойства для сотрудников
+        public string? StaffName { get; set; }
+        public string? StaffSurname { get; set; }
+        public string? StaffPhone { get; set; }
+        public Position? StaffPosition { get; set; }
+
+
+        #region COMMANDS TO ADD
+
+        private RelayCommand addNewDepartment;
+        public RelayCommand AddNewDepartment
+        {
+            get
+            {
+                return addNewDepartment ?? new RelayCommand(obj =>
+                {
+                    Window wnd = obj as Window;
+                    if (DepartmentName == null || DepartmentName.Replace(" ", "").Length == 0)
+                    {
+                        SetRedBlockControl(wnd, "NameBlock");
+                    }
+                    else
+                    {
+                        string resultStr = DataWorker.CreateDepartment(DepartmentName);
+                        UpdateAllDataView();
+                        ShowMessageToUSer(resultStr);
+                        SetNullValuesToProperties();
+                        wnd.Close();
+                    }
+
+                });
+            }
+        }
+
+
+        private RelayCommand addNewPosition;
+        public RelayCommand AddNewPosition
+        {
+            get
+            {
+                return addNewPosition ?? new RelayCommand(obj =>
+                {
+                    Window wnd = obj as Window;
+                    if (PositionName == null || PositionName.Replace(" ", "").Length == 0)
+                    {
+                        SetRedBlockControl(wnd, "NameBlock");
+                    }
+                    if (PositionSalary == 0)
+                    {
+                        SetRedBlockControl(wnd, "SalaryBlock");
+                    }
+                    if (PositionMaxNumber == 0)
+                    {
+                        SetRedBlockControl(wnd, "MaxNumberBlock");
+                    }
+                    if (PositionDepartment == null)
+                    {
+                        MessageBox.Show("Укажите отдел");
+                    }
+                    else
+                    {
+                        string resultStr = DataWorker.CreatePosition(PositionName, PositionSalary, PositionMaxNumber, PositionDepartment);
+                        UpdateAllDataView();
+
+                        ShowMessageToUSer(resultStr);
+                        SetNullValuesToProperties();
+                        wnd.Close();
+                    }
+                }
+                );
+            }
+        }
+
+
+        private RelayCommand addNewStaff;
+        public RelayCommand AddNewStaff
+        {
+            get
+            {
+                return addNewStaff ?? new RelayCommand(obj =>
+                {
+                    Window wnd = obj as Window;
+                    bool CanAdd = true;
+                    if (StaffName == null || StaffName.Replace(" ", "").Length == 0)
+                    {
+                        SetRedBlockControl(wnd, "NameBlock"); CanAdd = false;
+                    }
+                    if (StaffSurname == null || StaffSurname.Replace(" ", "").Length == 0)
+                    {
+                        SetRedBlockControl(wnd, "SurNameBlock"); CanAdd = false;
+                    }
+                    if (StaffPhone == null || StaffPhone.Replace(" ", "").Length == 0)
+                    {
+                        SetRedBlockControl(wnd, "PhoneBlock"); CanAdd = false;
+                    }
+                    if (StaffPosition == null)
+                    {
+                        MessageBox.Show("Укажите позицию"); CanAdd = false;
+                    }
+                    if (CanAdd)
+                    {
+                        string resultStr = DataWorker.CreateStaff(StaffName, StaffSurname, StaffPhone, StaffPosition);
+                        UpdateAllDataView();
+
+                        ShowMessageToUSer(resultStr);
+                        SetNullValuesToProperties();
+                        wnd.Close();
+                    }
+                }
+                );
+            }
+        }
+
+
+
+        private void SetRedBlockControl(Window wnd, string blockName)
+        {
+            Control block = wnd.FindName(blockName) as Control;
+            block.BorderBrush = Brushes.Red;
+        }
+
+        #endregion
 
         #region COMMANDS TO OPEN WINDOWS
 
@@ -129,8 +267,68 @@ namespace YouTubeLessonMVVM.ViewModel
         }
         #endregion
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #region UPDATE VIEWS
+        private void SetNullValuesToProperties()
+        {
+            // для сотрудников
+            StaffName = null;
+            StaffSurname = null;
+            StaffPhone = null;
+            StaffPosition = null;
 
+            // для позиций
+            PositionName = null; 
+            PositionSalary = 0; 
+            PositionMaxNumber = 0;
+            PositionDepartment = null;
+
+            // для отделов
+            DepartmentName = null;
+        }
+
+
+        private void UpdateAllDataView()
+        {
+            UpdateAllDepartmentsViews();
+            UpdateAllPositions();
+            UpdateAllStaffs();
+        }
+
+        private void UpdateAll(IList lst, ListView view)
+        {
+            view.ItemsSource = null;
+            view.Items.Clear();
+            view.ItemsSource = lst;
+            view.Items.Refresh();
+        }
+
+        private void UpdateAllDepartmentsViews()
+        {
+            AllDepartments = DataWorker.GetAllDepartments();
+            UpdateAll(AllDepartments, MainWindow.AllDepartmentsView);
+        }
+
+        private void UpdateAllPositions()
+        {
+            AllPositions = DataWorker.GetAllPositions();
+            UpdateAll(AllPositions, MainWindow.AllPositionsView);
+        }
+
+        private void UpdateAllStaffs()
+        {
+            AllStaffs = DataWorker.GetAllStaffs();
+            UpdateAll(AllStaffs, MainWindow.AllStaffsView);
+        }
+
+        #endregion
+
+        private void ShowMessageToUSer(string message)
+        {
+            MessageView messageView = new MessageView(message);
+            SetCenterPositionAndOpen(messageView);
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void NotifyPropertyChanged(String propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

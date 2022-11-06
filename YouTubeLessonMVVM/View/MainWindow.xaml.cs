@@ -21,10 +21,16 @@ namespace YouTubeLessonMVVM.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static ListView AllDepartmentsView;
+        public static ListView AllPositionsView;
+        public static ListView AllStaffsView;
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new DataManagerVM();
+            AllDepartmentsView = ViewAllDepartments;
+            AllPositionsView = ViewAllPositions;
+            AllStaffsView = ViewAllStaffs;
         }
     }
 }

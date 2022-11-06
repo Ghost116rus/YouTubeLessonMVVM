@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using YouTubeLessonMVVM.ViewModel;
 
 namespace YouTubeLessonMVVM.View.Add
 {
@@ -22,6 +23,7 @@ namespace YouTubeLessonMVVM.View.Add
         public AddNewDepartmentWindow()
         {
             InitializeComponent();
+            DataContext = new DataManagerVM();
         }
     }
 }

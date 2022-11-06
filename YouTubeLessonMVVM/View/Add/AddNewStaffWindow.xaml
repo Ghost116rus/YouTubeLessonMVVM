@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YouTubeLessonMVVM.View.Add"
         mc:Ignorable="d"
-        Title="AddNewStaffWindow" Height="300" Width="300">
+        Title="AddNewStaffWindow" Height="300" Width="300"
+        Name="AddNewStaffWnd">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -16,14 +17,18 @@
                     VerticalAlignment="Center"
                     Width="120">
             <TextBlock Text="Name"/>
-            <TextBox Text=""/>
+            <TextBox Name="NameBlock" Text="{Binding StaffName}"/>
             <TextBlock Text="SurName"/>
-            <TextBox Text=""/>
+            <TextBox Name="SurNameBlock" Text="{Binding StaffSurname}"/>
             <TextBlock Text="Phone"/>
-            <TextBox Text=""/>
+            <TextBox Name="PhoneBlock" Text="{Binding StaffPhone}"/>
             <TextBlock Text="Position"/>
-            <ComboBox/>
+            <ComboBox ItemsSource="{Binding AllPositions}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding StaffPosition}"/>
         </StackPanel>
-        <Button Grid.Row="1" Content="Add Staff"/>
+        <Button Grid.Row="1" Content="Add Staff"
+                Command="{Binding AddNewStaff}"
+                CommandParameter="{Binding ElementName=AddNewStaffWnd}"/>
     </Grid>
 </Window>
