@@ -21,7 +21,7 @@
             <TextBlock Text="SurName"/>
             <TextBox Name="SurNameBlock" Text="{Binding StaffSurname}"/>
             <TextBlock Text="Phone"/>
-            <TextBox Name="PhoneBlock" Text="{Binding StaffPhone}"/>
+            <TextBox Name="PhoneBlock" PreviewTextInput="PreviewTextInput" Text="{Binding StaffPhone}"/>
             <TextBlock Text="Position"/>
             <ComboBox ItemsSource="{Binding AllPositions}"
                       DisplayMemberPath="Name"
