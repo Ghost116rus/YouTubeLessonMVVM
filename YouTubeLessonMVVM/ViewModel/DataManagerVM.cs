@@ -104,23 +104,24 @@ namespace YouTubeLessonMVVM.ViewModel
                 return addNewPosition ?? new RelayCommand(obj =>
                 {
                     Window wnd = obj as Window;
+                    bool CanAdd = true;
                     if (PositionName == null || PositionName.Replace(" ", "").Length == 0)
                     {
-                        SetRedBlockControl(wnd, "NameBlock");
+                        SetRedBlockControl(wnd, "NameBlock"); CanAdd = false;
                     }
                     if (PositionSalary == 0)
                     {
-                        SetRedBlockControl(wnd, "SalaryBlock");
+                        SetRedBlockControl(wnd, "SalaryBlock"); CanAdd = false;
                     }
                     if (PositionMaxNumber == 0)
                     {
-                        SetRedBlockControl(wnd, "MaxNumberBlock");
+                        SetRedBlockControl(wnd, "MaxNumberBlock"); CanAdd = false;
                     }
                     if (PositionDepartment == null)
                     {
-                        MessageBox.Show("Укажите отдел");
+                        MessageBox.Show("Укажите отдел"); CanAdd = false;
                     }
-                    else
+                    if (CanAdd)                   
                     {
                         string resultStr = DataWorker.CreatePosition(PositionName, PositionSalary, PositionMaxNumber, PositionDepartment);
                         UpdateAllDataView();
